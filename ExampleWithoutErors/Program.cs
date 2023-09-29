@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExampleWithoutErrors
 {
@@ -8,7 +9,7 @@ namespace ExampleWithoutErrors
         public static void Main(string[] args)
         {
             string fileName = "contacts.txt"; // Имя файла по умолчанию
-
+            
             Console.WriteLine(
                 "Введите имя файла для загрузки контактов или оставьте поле пустым для использования файла по умолчанию (contacts.txt):");
             string inputFileName = Console.ReadLine();
@@ -19,7 +20,8 @@ namespace ExampleWithoutErrors
             }
 
             ContactManager contactManager = new ContactManager(fileName);
-
+            IInOutManager consoleManager = new ConsoleManager();
+            
             while (true)
             {
                 Console.WriteLine("Выберите действие:");
@@ -47,18 +49,15 @@ namespace ExampleWithoutErrors
                     case "2":
                         Console.Write("Введите ключевое слово для поиска: ");
                         string keyword = Console.ReadLine();
-                        List<Contact> searchResults = contactManager.SearchContacts(keyword);
+                        List<Contact> searchResultsOfContacts = contactManager.SearchContacts(keyword); // Поиск по телефону или имени
                         Console.WriteLine("Результаты поиска:");
-                        if (searchResults.Count == 0)
+                        if (searchResultsOfContacts.Count == 0)
                         {
                             Console.WriteLine("Контактов не найдено.");
                         }
                         else
                         {
-                            foreach (var contact in searchResults)
-                            {
-                                Console.WriteLine(contact);
-                            }
+                            searchResultsOfContacts.ForEach(Console.WriteLine);
                         }
                         break;
 
@@ -69,20 +68,15 @@ namespace ExampleWithoutErrors
                     
                     case "4":
                         Console.WriteLine("Контакты из файла:");
-                        List<Contact> loadedContacts = contactManager.GetAllContacts();
-                        foreach (var contact in loadedContacts)
-                        {
-                            Console.WriteLine(contact);
-                        }
+                        List<Contact> loadedContacts = contactManager.LoadContactsFromFile(fileName);
+                        Console.WriteLine("Список всех контактов:");
+                        consoleManager.WriteContacts(loadedContacts);
                         break;
 
                     case "5":
                         List<Contact> allContacts = contactManager.GetAllContacts();
                         Console.WriteLine("Список всех контактов:");
-                        foreach (var contact in allContacts)
-                        {
-                            Console.WriteLine(contact);
-                        }
+                        consoleManager.WriteContacts(allContacts);
                         break;
 
                     case "6":

@@ -4,6 +4,17 @@ using System.Linq;
 
 namespace ExampleWithErrors
 {
+    public class Contact
+    {
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+
+        public override string ToString()
+        {
+            return $"Имя: {Name}, Телефон: {PhoneNumber}";
+        }
+    }
+    
     public class ContactManager
     {
         private List<Contact> contacts = new List<Contact>();
@@ -36,7 +47,7 @@ namespace ExampleWithErrors
 
         public void SaveContactsToFile(string fileName)
         {
-            using (StreamWriter writer = new StreamWriter(fileName))
+            using (StreamWriter writer = new StreamWriter(fileName, true))
             {
                 foreach (var contact in contacts)
                 {

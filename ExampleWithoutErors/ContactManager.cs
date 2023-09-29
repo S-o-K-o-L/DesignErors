@@ -6,16 +6,11 @@ namespace ExampleWithoutErrors
 {
     public class ContactManager
     {
-        private List<Contact> contacts = new List<Contact>();
-        private string fileName;
-        
+        private List<Contact> contacts;
+
         public ContactManager(string fileName)
         {
-            this.fileName = fileName;
-            if (File.Exists(fileName))
-            {
-                LoadContactsFromFile(fileName);
-            }
+            contacts = LoadContactsFromFile(fileName);
         }
 
         public void AddContact(Contact contact)
@@ -25,10 +20,11 @@ namespace ExampleWithoutErrors
 
         public List<Contact> SearchContacts(string keyword)
         {
-            return contacts.Where(contact => contact.Name.Contains(keyword) || contact.PhoneNumber.Contains(keyword))
+            return contacts.Where(contact => contact.Name.Contains(keyword)
+                                             || contact.PhoneNumber.Contains(keyword))
                 .ToList();
         }
-        
+
         public List<Contact> GetAllContacts()
         {
             return contacts;
@@ -36,32 +32,14 @@ namespace ExampleWithoutErrors
 
         public void SaveContactsToFile(string fileName)
         {
-            using (StreamWriter writer = new StreamWriter(fileName))
-            {
-                foreach (var contact in contacts)
-                {
-                    writer.WriteLine($"{contact.Name},{contact.PhoneNumber}");
-                }
-            }
+            IInOutManager fileManger = new FileManager(fileName);
+            fileManger.WriteContacts(contacts);
         }
 
-        private void LoadContactsFromFile(string fileName)
+        public List<Contact> LoadContactsFromFile(string fileName)
         {
-            using (StreamReader reader = new StreamReader(fileName))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 2)
-                    {
-                        string name = parts[0];
-                        string phoneNumber = parts[1];
-                        Contact contact = new Contact { Name = name, PhoneNumber = phoneNumber };
-                        contacts.Add(contact);
-                    }
-                }
-            }
+            IInOutManager fileManger = new FileManager(fileName);
+            return fileManger.ReadContacts();
         }
     }
 }

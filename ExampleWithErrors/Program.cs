@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace ExampleWithErrors
 {
     internal class Program
     {
-        public static void Main(string[] args)
+        public static void Main(string[] args) //Код неподвижен - все в одном файле!!!!
         {
             string fileName = "contacts.txt"; // Имя файла по умолчанию
 
@@ -18,7 +20,23 @@ namespace ExampleWithErrors
                 fileName = inputFileName;
             }
 
-            ContactManager contactManager = new ContactManager(fileName);
+            List<Contact> contacts = new List<Contact>();
+            
+            using (StreamReader reader = new StreamReader(fileName)) //Загрузка данных из файла
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(',');
+                    if (parts.Length == 2)
+                    {
+                        string name = parts[0];
+                        string phoneNumber = parts[1];
+                        Contact contact = new Contact { Name = name, PhoneNumber = phoneNumber };
+                        contacts.Add(contact);
+                    }
+                }
+            }
 
             while (true)
             {
@@ -40,14 +58,16 @@ namespace ExampleWithErrors
                         Console.Write("Введите номер телефона: ");
                         string nomer = Console.ReadLine(); //Ошибка именования (плохая читабельность)
                         Contact noviykontakt = new Contact { Name = imya, PhoneNumber = nomer }; //Ошибка именования и код стайла (плохая читабельность)
-                        contactManager.AddContact(noviykontakt);
+                        contacts.Add(noviykontakt);
                         Console.WriteLine("Контакт успешно добавлен.");
                         break;
 
                     case "2":
                         Console.Write("Введите ключевое слово для поиска: ");
                         string keyword = Console.ReadLine();
-                        List<Contact> searchResults = contactManager.SearchContacts(keyword);
+                        List<Contact> searchResults = contacts
+                            .Where(contact => keyword != null && (contact.Name.Contains(keyword) || contact.PhoneNumber.Contains(keyword)))
+                            .ToList();
                         Console.WriteLine("Результаты поиска:");
                         if (searchResults.Count == 0)
                         {
@@ -63,13 +83,34 @@ namespace ExampleWithErrors
                         break;
 
                     case "3":
-                        contactManager.SaveContactsToFile(fileName);
+                        using (StreamWriter writer = new StreamWriter(fileName))
+                        {
+                            foreach (var contact in contacts)
+                            {
+                                writer.WriteLine($"{contact.Name},{contact.PhoneNumber}");
+                            }
+                        }
                         Console.WriteLine($"Контакты успешно сохранены в файл {fileName}.");
                         break;
                     
                     case "4":
                         Console.WriteLine("Контакты из файла:");
-                        List<Contact> loadedContacts = contactManager.GetAllContacts();
+                        List<Contact> loadedContacts = new List<Contact>();
+                        using (StreamReader reader = new StreamReader(fileName)) //Ненужная повторяемость!!!
+                        {
+                            string line;
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                string[] parts = line.Split(',');
+                                if (parts.Length == 2)
+                                {
+                                    string name = parts[0];
+                                    string phoneNumber = parts[1];
+                                    Contact contact = new Contact { Name = name, PhoneNumber = phoneNumber };
+                                    loadedContacts.Add(contact);
+                                }
+                            }
+                        }
                         foreach (var contact in loadedContacts)
                         {
                             Console.WriteLine(contact);
@@ -77,9 +118,9 @@ namespace ExampleWithErrors
                         break;
 
                     case "5":
-                        List<Contact> allContacts = contactManager.GetAllContacts();
+                        
                         Console.WriteLine("Список всех контактов:");
-                        foreach (var contact in allContacts)
+                        foreach (var contact in contacts)
                         {
                             Console.WriteLine(contact);
                         }
