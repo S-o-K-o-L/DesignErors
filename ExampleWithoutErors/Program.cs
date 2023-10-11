@@ -8,78 +8,59 @@ namespace ExampleWithoutErrors
     {
         public static void Main(string[] args)
         {
-            string fileName = "contacts.txt"; // Имя файла по умолчанию
-            
-            Console.WriteLine(
-                "Введите имя файла для загрузки контактов или оставьте поле пустым для использования файла по умолчанию (contacts.txt):");
-            string inputFileName = Console.ReadLine();
+            ContactManager contactManager = new ContactManager();
 
-            if (!string.IsNullOrEmpty(inputFileName))
-            {
-                fileName = inputFileName;
-            }
-
-            ContactManager contactManager = new ContactManager(fileName);
-            IInOutManager consoleManager = new ConsoleManager();
-            
             while (true)
             {
                 Console.WriteLine("Выберите действие:");
                 Console.WriteLine("1. Добавить контакт");
                 Console.WriteLine("2. Поиск контакта");
-                Console.WriteLine("3. Сохранить контакты в файл");
-                Console.WriteLine("4. Вывести контакты из файла");
-                Console.WriteLine("5. Печать всех контактов");
-                Console.WriteLine("6. Выйти");;
+                Console.WriteLine("3. Печать всех контактов");
+                Console.WriteLine("4. Выйти");
+                ;
 
                 string choice = Console.ReadLine();
 
                 switch (choice)
                 {
-                    case "1":
+                    case "1": //Добавление
                         Console.Write("Введите имя: ");
                         string name = Console.ReadLine();
                         Console.Write("Введите номер телефона: ");
                         string phoneNumber = Console.ReadLine();
-                        Contact newContact = new Contact { Name = name, PhoneNumber = phoneNumber };
+                        Console.Write("Введите тип: ");
+                        string type = Console.ReadLine();
+                        Contact newContact = new Contact { Name = name, PhoneNumber = phoneNumber, Type = type };
                         contactManager.AddContact(newContact);
                         Console.WriteLine("Контакт успешно добавлен.");
                         break;
 
-                    case "2":
+                    case "2": //Поиск
                         Console.Write("Введите ключевое слово для поиска: ");
                         string keyword = Console.ReadLine();
-                        List<Contact> searchResultsOfContacts = contactManager.SearchContacts(keyword); // Поиск по телефону или имени
+                        List<Contact>
+                            searchResultsOfContacts =
+                                contactManager.SearchContacts(keyword); // Поиск по телефону или имени
                         Console.WriteLine("Результаты поиска:");
                         if (searchResultsOfContacts.Count == 0)
                         {
-                            Console.WriteLine("Контактов не найдено.");
+                            Console.WriteLine("Контакт(ы) не найдены.");
                         }
                         else
                         {
+                            //Выводим в консоль
                             searchResultsOfContacts.ForEach(Console.WriteLine);
                         }
+
                         break;
 
-                    case "3":
-                        contactManager.SaveContactsToFile(fileName);
-                        Console.WriteLine($"Контакты успешно сохранены в файл {fileName}.");
-                        break;
-                    
-                    case "4":
-                        Console.WriteLine("Контакты из файла:");
-                        List<Contact> loadedContacts = contactManager.LoadContactsFromFile(fileName);
-                        Console.WriteLine("Список всех контактов:");
-                        consoleManager.WriteContacts(loadedContacts);
-                        break;
-
-                    case "5":
+                    case "3": // Печать всех контактов
                         List<Contact> allContacts = contactManager.GetAllContacts();
                         Console.WriteLine("Список всех контактов:");
-                        consoleManager.WriteContacts(allContacts);
+                        allContacts.ForEach(Console.WriteLine); //Печатаем в консоль
                         break;
 
-                    case "6":
+                    case "4": //Выход
                         return;
 
                     default:

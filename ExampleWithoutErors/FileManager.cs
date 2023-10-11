@@ -18,7 +18,7 @@ namespace ExampleWithoutErrors
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter(_filename))
+                using (StreamWriter writer = new StreamWriter(_filename)) //Открываем файл на запись с 1 строки
                 {
                     foreach (var contact in contacts)
                     {
@@ -26,7 +26,7 @@ namespace ExampleWithoutErrors
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) // Если произошла какая-то ошибка - сообщаем об этом
             {
                 Console.WriteLine("Ошибка записи файла контактов: " + ex.Message);
             }
@@ -37,12 +37,12 @@ namespace ExampleWithoutErrors
             List<Contact> contacts = new List<Contact>();
             try
             {
-                using (StreamReader reader = new StreamReader(_filename))
+                using (StreamReader reader = new StreamReader(_filename)) //Открываем файл на запись с 1 строки
                 {
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
-                        string[] parts = line.Split(',');
+                        string[] parts = line.Split(','); //Данные в файле разделены запятой
                         if (parts.Length == 2)
                         {
                             string name = parts[0];
@@ -53,7 +53,7 @@ namespace ExampleWithoutErrors
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) // Если произошла какая-то ошибка - сообщаем об этом
             {
                 Console.WriteLine("Ошибка чтения файла контактов: " + ex.Message);
             }

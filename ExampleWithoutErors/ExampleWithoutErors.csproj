@@ -39,11 +39,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ConsoleManager.cs" />
         <Compile Include="Contact.cs" />
         <Compile Include="ContactManager.cs" />
-        <Compile Include="FileManager.cs" />
-        <Compile Include="IInOutManager.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

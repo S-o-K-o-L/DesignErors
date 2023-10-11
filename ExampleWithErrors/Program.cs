@@ -5,128 +5,91 @@ using System.Linq;
 
 namespace ExampleWithErrors
 {
+    //Код неподвижен - все в одном файле!!!! - 1 ошибка
+    //Ошибка именования и код стайла (плохая читабельность) - 2 ошибка
     internal class Program
     {
-        public static void Main(string[] args) //Код неподвижен - все в одном файле!!!!
+        private class Kontakt
         {
-            string fileName = "contacts.txt"; // Имя файла по умолчанию
+            public string Imya { get; set; }
+            public string NomerTelephona { get; set; }
+            public TypeKontact TypeKontact { get; set; }
 
-            Console.WriteLine(
-                "Введите имя файла для загрузки контактов или оставьте поле пустым для использования файла по умолчанию (contacts.txt):");
-            string inputFileName = Console.ReadLine();
-
-            if (!string.IsNullOrEmpty(inputFileName))
+            public override string ToString()
             {
-                fileName = inputFileName;
+                return $"Имя: {Imya}, Телефон: {NomerTelephona}";
             }
+        }
+        
+        public enum TypeKontact //жесткость - использование перечислимого типа - 3 ошибка
+        {
+            Rabochii,
+            Domashniy
+        }
 
-            List<Contact> contacts = new List<Contact>();
-            
-            using (StreamReader reader = new StreamReader(fileName)) //Загрузка данных из файла
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 2)
-                    {
-                        string name = parts[0];
-                        string phoneNumber = parts[1];
-                        Contact contact = new Contact { Name = name, PhoneNumber = phoneNumber };
-                        contacts.Add(contact);
-                    }
-                }
-            }
+        public static void Main(string[] args)
+        {
+            List<Kontakt> kontakty = new List<Kontakt>();
 
             while (true)
             {
                 Console.WriteLine("Выберите действие:");
                 Console.WriteLine("1. Добавить контакт");
                 Console.WriteLine("2. Поиск контакта");
-                Console.WriteLine("3. Сохранить контакты в файл");
-                Console.WriteLine("4. Вывести контакты из файла");
-                Console.WriteLine("5. Печать всех контактов");
-                Console.WriteLine("6. Выйти");;
+                Console.WriteLine("3. Печать всех контактов");
+                Console.WriteLine("4. Выйти");
 
                 string choice = Console.ReadLine();
 
                 switch (choice)
                 {
-                    case "1":
+                    case "1": //Добавление нового контакта
                         Console.Write("Введите имя: ");
-                        string imya = Console.ReadLine(); //Ошибка именования (плохая читабельность)
+                        string imya = Console.ReadLine();
+                        
                         Console.Write("Введите номер телефона: ");
-                        string nomer = Console.ReadLine(); //Ошибка именования (плохая читабельность)
-                        Contact noviykontakt = new Contact { Name = imya, PhoneNumber = nomer }; //Ошибка именования и код стайла (плохая читабельность)
-                        contacts.Add(noviykontakt);
+                        string nomer = Console.ReadLine();
+                        
+                        Console.Write("Введите тип контакта: 0 - рабочий, 1 - домашний ");
+                        string tip = Console.ReadLine();
+                        
+                        //жесткость - использование перечислимого типа
+                        Kontakt noviykontakt = new Kontakt
+                        {
+                            Imya = imya, NomerTelephona = nomer,
+                            TypeKontact = tip != null && tip.Equals("0") ? TypeKontact.Rabochii : TypeKontact.Domashniy
+                        };
+                        kontakty.Add(noviykontakt);
                         Console.WriteLine("Контакт успешно добавлен.");
                         break;
 
-                    case "2":
+                    case "2": //Поиск по ключевому слову или номеру
                         Console.Write("Введите ключевое слово для поиска: ");
                         string keyword = Console.ReadLine();
-                        List<Contact> searchResults = contacts
-                            .Where(contact => keyword != null && (contact.Name.Contains(keyword) || contact.PhoneNumber.Contains(keyword)))
+                        List<Kontakt> naidennyieResyltaty = kontakty
+                            .Where(kontakt =>
+                                keyword != null && (kontakt.Imya.Contains(keyword) ||
+                                                    kontakt.NomerTelephona.Contains(keyword)))
                             .ToList();
                         Console.WriteLine("Результаты поиска:");
-                        if (searchResults.Count == 0)
+                        if (naidennyieResyltaty.Count == 0)
                         {
                             Console.WriteLine("Контактов не найдено.");
                         }
                         else
                         {
-                            foreach (var contact in searchResults)
-                            {
-                                Console.WriteLine(contact);
-                            }
+                            naidennyieResyltaty.ForEach(Console.WriteLine);
                         }
+
                         break;
 
                     case "3":
-                        using (StreamWriter writer = new StreamWriter(fileName))
-                        {
-                            foreach (var contact in contacts)
-                            {
-                                writer.WriteLine($"{contact.Name},{contact.PhoneNumber}");
-                            }
-                        }
-                        Console.WriteLine($"Контакты успешно сохранены в файл {fileName}.");
-                        break;
-                    
-                    case "4":
-                        Console.WriteLine("Контакты из файла:");
-                        List<Contact> loadedContacts = new List<Contact>();
-                        using (StreamReader reader = new StreamReader(fileName)) //Ненужная повторяемость!!!
-                        {
-                            string line;
-                            while ((line = reader.ReadLine()) != null)
-                            {
-                                string[] parts = line.Split(',');
-                                if (parts.Length == 2)
-                                {
-                                    string name = parts[0];
-                                    string phoneNumber = parts[1];
-                                    Contact contact = new Contact { Name = name, PhoneNumber = phoneNumber };
-                                    loadedContacts.Add(contact);
-                                }
-                            }
-                        }
-                        foreach (var contact in loadedContacts)
-                        {
-                            Console.WriteLine(contact);
-                        }
-                        break;
 
-                    case "5":
-                        
                         Console.WriteLine("Список всех контактов:");
-                        foreach (var contact in contacts)
-                        {
-                            Console.WriteLine(contact);
-                        }
+                        kontakty.ForEach(Console.WriteLine); //Именование
                         break;
 
-                    case "6":
+                    case "4":
                         return;
 
                     default:
