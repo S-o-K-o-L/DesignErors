@@ -10,7 +10,7 @@ namespace ExampleWithoutErrors
 
         public override string ToString()
         {
-            return $"Имя: {Name}, Телефон: {PhoneNumber}";
+            return $"Имя: {Name}, Телефон: {PhoneNumber}, Тип: {Type}";
         }
     }
 }

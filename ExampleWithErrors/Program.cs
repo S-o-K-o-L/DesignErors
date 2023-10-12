@@ -17,7 +17,7 @@ namespace ExampleWithErrors
 
             public override string ToString()
             {
-                return $"Имя: {Imya}, Телефон: {NomerTelephona}";
+                return $"Имя: {Imya}, Телефон: {NomerTelephona}, Тип контакта: {TypeKontact}";
             }
         }
         
@@ -50,7 +50,7 @@ namespace ExampleWithErrors
                         Console.Write("Введите номер телефона: ");
                         string nomer = Console.ReadLine();
                         
-                        Console.Write("Введите тип контакта: 0 - рабочий, 1 - домашний ");
+                        Console.Write("Введите тип контакт1а: 0 - рабочий, 1 - домашний ");
                         string tip = Console.ReadLine();
                         
                         //жесткость - использование перечислимого типа

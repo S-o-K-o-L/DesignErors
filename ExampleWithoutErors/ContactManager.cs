@@ -6,7 +6,7 @@ namespace ExampleWithoutErrors
 {
     public class ContactManager
     {
-        private List<Contact> contacts;
+        private List<Contact> contacts = new List<Contact>();
         
         public void AddContact(Contact contact)
         {

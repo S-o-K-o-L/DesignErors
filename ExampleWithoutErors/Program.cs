@@ -17,7 +17,6 @@ namespace ExampleWithoutErrors
                 Console.WriteLine("2. Поиск контакта");
                 Console.WriteLine("3. Печать всех контактов");
                 Console.WriteLine("4. Выйти");
-                ;
 
                 string choice = Console.ReadLine();
 
